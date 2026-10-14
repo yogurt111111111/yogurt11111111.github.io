@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>测测你的本体</title>
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: "Microsoft Yahei", "PingFang SC", sans-serif;
+  }
+
+  body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #fde6f3, #e0f4ff);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 24px 16px;
+  }
+
+  .app {
+    width: 100%;
+    max-width: 640px;
+    background: #fff;
+    border-radius: 24px;
+    padding: 28px 22px;
+    box-shadow: 0 10px 30px rgba(255, 107, 157, 0.15);
+  }
+
+  h1 {
+    text-align: center;
+    color: #ff5c8a;
+    font-size: 28px;
+    margin-bottom: 8px;
+  }
+
+  .subtitle {
+    text-align: center;
+    color: #888;
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+
+  .progress {
+    height: 8px;
+    background: #f3f3f3;
+    border-radius: 999px;
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+
+  .progress-bar {
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg, #ff9ec7, #7cc6fe);
+    border-radius: 999px;
+    transition: width 0.3s ease;
+  }
+
+  .question {
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .question.active {
+    display: block;
+  }
+
+  .q-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    line-height: 1.6;
+    margin-bottom: 18px;
+  }
+
+  .option {
+    background: #fafafa;
+    border: 1px solid #eee;
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 15px;
+    color: #444;
+  }
+
+  .option:hover {
+    background: #ffeef5;
+    border-color: #ffb3d1;
+    transform: translateY(-1px);
+  }
+
+  .option.selected {
+    background: #ff5c8a;
+    color: #fff;
+    border-color: #ff5c8a;
+  }
+
+  .btn-box {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 26px;
+  }
+
+  button {
+    border: none;
+    border-radius: 999px;
+    padding: 12px 28px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  #prev {
+    background: #eee;
+    color: #555;
+  }
+
+  #prev:hover {
+    background: #ddd;
+  }
+
+  #prev:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  #next {
+    background: linear-gradient(90deg, #ff5c8a, #7cc6fe);
+    color: #fff;
+  }
+
+  #next:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(255, 92, 138, 0.3);
+  }
+
+  .result {
+    display: none;
+    text-align: center;
+    animation: fadeIn 0.4s ease;
+  }
+
+  .result h2 {
+    color: #ff5c8a;
+    font-size: 24px;
+    margin-bottom: 16px;
+  }
+
+  .result-name {
+    font-size: 22px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 12px;
+  }
+
+  .result-desc {
+    font-size: 15px;
+    line-height: 1.8;
+    color: #555;
+    text-align: left;
+    background: #fef6fb;
+    border-left: 4px solid #ff9ec7;
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  #restart {
+    margin-top: 24px;
+    background: #ff5c8a;
+    color: #fff;
+  }
+
+  #restart:hover {
+    background: #ff4579;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+</head>
+
+<body>
+  <div class="app">
+    <h1>测测你的本体</h1>
+    <p class="subtitle">凭第一直觉选择答案，共 10 题</p>
+
+    <div class="progress">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <div id="questionsBox">
+      <!--第1题-->
+      <div class="question active" data-index="0">
+        <div class="q-title">1. 结束一天后，你最想做什么？</div>
+        <div class="option" data-key="A">A 躲回自己的小空间，安静充电</div>
+        <div class="option" data-key="B">B 制定计划，继续推进待办任务</div>
+        <div class="option" data-key="C">C 和人聊天，表达自己的想法感受</div>
+        <div class="option" data-key="D">D 随心探索新鲜小事，轻松玩耍</div>
+      </div>
+      <!--第2题-->
+      <div class="question" data-index="1">
+        <div class="q-title">2. 面对陌生的新环境，你通常？</div>
+        <div class="option" data-key="A">A 谨慎观察，慢慢适应，保护自我边界</div>
+        <div class="option" data-key="B">B 快速找准目标，立刻开始行动</div>
+        <div class="option" data-key="C">C 主动与人交流，快速熟悉周围</div>
+        <div class="option" data-key="D">D 随性感受，想到什么就尝试什么</div>
+      </div>
+      <!--第3题-->
+      <div class="question" data-index="2">
+        <div class="q-title">3. 事情出现失误，你的第一反应？</div>
+        <div class="option" data-key="A">A 稳住情绪，先保护好自己的心态</div>
+        <div class="option" data-key="B">B 立刻寻找解决方案，动手补救</div>
+        <div class="option" data-key="C">C 说出内心感受，找人倾诉情绪</div>
+        <div class="option" data-key="D">D 不想被约束，先暂时躲开压力</div>
+      </div>
+      <!--第4题-->
+      <div class="question" data-index="3">
+        <div class="q-title">4. 你希望留给别人什么印象？</div>
+        <div class="option" data-key="E">A 真实自然，不刻意伪装讨好他人</div>
+        <div class="option" data-key="F">B 亮眼优雅，有主见，自带魅力</div>
+        <div class="option" data-key="A">C 温和包容，不容易与人起冲突</div>
+        <div class="option" data-key="B">D 靠谱踏实，做事说到做到</div>
+      </div>
+      <!--第5题-->
+      <div class="question" data-index="4">
+        <div class="q-title">5. 周末的空闲时间，你更愿意？</div>
+        <div class="option" data-key="A">A 在熟悉环境里静养，保持舒适状态</div>
+        <div class="option" data-key="B">B 按计划完成任务，稳步提升自己</div>
+        <div class="option" data-key="C">C 和朋友聚餐聊天，分享日常趣事</div>
+        <div class="option" data-key="D">D 临时出门闲逛，随心所欲不规划</div>
+      </div>
+      <!--第6题-->
+      <div class="question" data-index="5">
+        <div class="q-title">6. 和他人产生分歧的时候，你会？</div>
+        <div class="option" data-key="A">A 尽量回避争吵，维持平和氛围</div>
+        <div class="option" data-key="B">B 理性分析，想办法推进解决问题</div>
+        <div class="option" data-key="C">C 直接表达想法，坦诚说出感受</div>
+        <div class="option" data-key="D">D 不想被道理束缚，遵从本心选择</div>
+      </div>
+      <!--第7题-->
+      <div class="question" data-index="6">
+        <div class="q-title">7. 别人对你的评价，你一般怎么看待？</div>
+        <div class="option" data-key="E">A 接纳全部的自己，不在意旁人眼光</div>
+        <div class="option" data-key="F">B 会放在心上，希望维持良好形象</div>
+        <div class="option" data-key="A">C 有选择听取，守住自己内心的安稳</div>
+        <div class="option" data-key="D">D 听听就好，不会限制自己的选择</div>
+      </div>
+      <!--第8题-->
+      <div class="question" data-index="7">
+        <div class="q-title">8. 选择兴趣活动，你偏爱？</div>
+        <div class="option" data-key="A">A 安静治愈类，享受独处时光</div>
+        <div class="option" data-key="B">B 目标挑战类，可以看到自己进步</div>
+        <div class="option" data-key="C">C 交流分享类，能够表达想法</div>
+        <div class="option" data-key="D">D 轻松随性类，自由无压力</div>
+      </div>
+      <!--第9题-->
+      <div class="question" data-index="8">
+        <div class="q-title">9. 对于自我成长，你的想法是？</div>
+        <div class="option" data-key="E">A 接纳原生的自己，不必强行改变</div>
+        <div class="option" data-key="F">B 持续打磨，追求更好的自己</div>
+        <div class="option" data-key="A">C 稳步守护内心，保持情绪稳定</div>
+        <div class="option" data-key="B">D 脚踏实地，一步一步积累成长</div>
+      </div>
+      <!--第10题-->
+      <div class="question" data-index="9">
+        <div class="q-title">10.下面哪句话最贴合你的观念？</div>
+        <div class="option" data-key="A">A 温和自持，守护内心的一方小天地</div>
+        <div class="option" data-key="B">B 行而不辍，坚持走自己选择的道路</div>
+        <div class="option" data-key="C">C 坦诚表达，感受生活里的喜怒哀乐</div>
+        <div class="option" data-key="D">D 随心而行，不被条条框框束缚</div>
+      </div>
+    </div>
+
+    <div class="btn-box">
+      <button id="prev" disabled>上一题</button>
+      <button id="next">下一题</button>
+    </div>
+
+    <div class="result">
+      <h2>✨你的本体是</h2>
+      <div class="result-name"></div>
+      <div class="result-desc"></div>
+      <button id="restart">重新测试</button>
+    </div>
+  </div>
+
+<script>
+const resultInfo = {
+  A:{
+    name:"蛋",
+    desc:"圆润包容型。外表柔和，内核稳定完整。不喜欢冲突争吵，擅长守护自己的内心世界，待人温和，拥有清晰的自我边界。"
+  },
+  B:{
+    name:"足",
+    desc:"踏实前行型。足代表前行的脚步，做事靠谱有耐力。确定目标就稳步向前，脚踏实地，执行力强，是很值得信赖的伙伴。"
+  },
+  C:{
+    name:"舌头",
+    desc:"感受表达型。感知敏锐，擅长沟通表达。愿意坦诚分享情绪与想法，共情力强，很适合与人交流，能感知丰富的人间滋味。"
+  },
+  D:{
+    name:"脚趾",
+    desc:"随性试探型。偏爱自由，喜欢小心探索新鲜事物。讨厌死板的规则束缚，喜欢松弛的节奏，遵从内心感受去尝试世界。"
+  },
+  E:{
+    name:"毛发",
+    desc:"原生自在型。如同自然生长的毛发，代表接纳本真的自我。不刻意伪装讨好别人，接纳自己全部的特点，活得舒展真实，不在乎外界评价。"
+  },
+  F:{
+    name:"女神",
+    desc:"闪光理想型。自带独特魅力，对自身有要求，向往美好与质感。拥有独立主见，不断追求理想状态，在人群中自带光芒。"
+  }
+}
+
+  let currentIndex = 0;
+  let answerRecord = {};
+  const questions = document.querySelectorAll('.question');
+  const prevBtn = document.getElementById('prev');
+  const nextBtn = document.getElementById('next');
+  const resultPanel = document.querySelector('.result');
+  const resultName = document.querySelector('.result-name');
+  const resultDesc = document.querySelector('.result-desc');
+  const restartBtn = document.getElementById('restart');
+  const progressBar = document.getElementById('progressBar');
+
+  // 更新进度条
+  function updateProgress(){
+    const percent = (currentIndex / questions.length) * 100;
+    progressBar.style.width = percent + '%';
+  }
+
+  // 选择答案
+  document.querySelectorAll('.option').forEach(item=>{
+    item.onclick = ()=>{
+      const parentBox = item.parentElement;
+      parentBox.querySelectorAll('.option').forEach(opt=>opt.classList.remove('selected'));
+      item.classList.add('selected');
+      answerRecord[currentIndex] = item.dataset.key;
+    }
+  })
+
+  function refreshPage(){
+    questions.forEach((q,idx)=>{
+      q.classList.toggle('active', idx === currentIndex);
+    })
+    prevBtn.disabled = currentIndex === 0;
+    updateProgress();
+  }
+
+  nextBtn.onclick = ()=>{
+    if(!answerRecord[currentIndex]){
+      alert("请选择一个答案！");
+      return;
+    }
+    currentIndex++;
+    if(currentIndex >= questions.length){
+      //统计选项次数
+      let countMap = {}
+      Object.values(answerRecord).forEach(key=>{
+        countMap[key] = (countMap[key] || 0) +1
+      })
+      let maxKey = Object.keys(countMap)[0];
+      for(let k in countMap){
+        if(countMap[k]>countMap[maxKey]) maxKey=k;
+      }
+      //展示结果
+      document.querySelector('.btn-box').style.display="none";
+      resultPanel.style.display="block";
+      resultName.innerText = resultInfo[maxKey].name;
+      resultDesc.innerText = resultInfo[maxKey].desc;
+      return;
+    }
+    refreshPage();
+  }
+
+  prevBtn.onclick = ()=>{
+    currentIndex--;
+    refreshPage();
+  }
+
+  restartBtn.onclick = ()=>{
+    currentIndex = 0;
+    answerRecord = {};
+    document.querySelectorAll('.option').forEach(o=>o.classList.remove('selected'));
+    resultPanel.style.display="none";
+    document.querySelector('.btn-box').style.display="flex";
+    refreshPage();
+  }
+  refreshPage();
+</script>
+</body>
+</html>
