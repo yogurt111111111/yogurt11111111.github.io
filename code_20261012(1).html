@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>三岔路口 · 实习 / 考公 / 考研 互动平台</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  background:#f6f7fb;color:#0f172a;line-height:1.65;-webkit-font-smoothing:antialiased;
+}
+button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,textarea,select{font:inherit;color:inherit}
+.hidden{display:none!important}
+
+/* ---------- NAV ---------- */
+.nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.84);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid #e8ecf3}
+.nav-inner{max-width:1080px;margin:0 auto;padding:0 20px;height:62px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:17px;letter-spacing:-.4px}
+.logo-mark{width:28px;height:28px;border-radius:9px;background:linear-gradient(135deg,#4f46e5,#8b5cf6);color:#fff;display:grid;place-items:center;font-size:14px;font-weight:700}
+.tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:7px 14px;border-radius:10px;font-size:14px;color:#64748b;white-space:nowrap;transition:.18s}
+.tab:hover{background:#f1f3f9;color:#0f172a}
+.tab.active{background:#eef0fd;color:#4f46e5;font-weight:600}
+
+/* ---------- VIEW ---------- */
+.view{max-width:1080px;margin:0 auto;padding:26px 20px 90px;animation:fade .32s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ---------- HERO ---------- */
+.hero{text-align:center;padding:40px 0 26px}
+.pill{display:inline-flex;align-items:center;gap:7px;padding:6px 14px;border-radius:999px;background:#fff;border:1px solid #e8ecf3;font-size:13px;color:#64748b;box-shadow:0 2px 8px rgba(15,23,42,.04)}
+.dot-live{width:6px;height:6px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.18)}
+.hero h1{font-size:clamp(28px,5.2vw,46px);line-height:1.18;letter-spacing:-1.4px;margin:18px 0 14px;font-weight:800}
+.hero h1 em{font-style:normal;background:linear-gradient(115deg,#4f46e5,#0ea5e9 50%,#8b5cf6);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero>p{color:#64748b;max-width:580px;margin:0 auto;font-size:15px}
+
+.countdowns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:30px}
+.cd{background:#fff;border:1px solid #e8ecf3;border-radius:16px;padding:13px 20px;min-width:142px;box-shadow:0 4px 16px rgba(15,23,42,.05)}
+.cd-label{font-size:12px;color:#94a3b8;letter-spacing:.3px}
+.cd-num{font-size:26px;font-weight:800;letter-spacing:-1px;line-height:1.25}
+.cd-num small{font-size:12px;font-weight:600;color:#94a3b8;margin-left:2px}
+
+/* ---------- SECTION ---------- */
+.sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:44px 0 16px}
+.sec-head h2{font-size:20px;letter-spacing:-.5px;font-weight:800}
+.sec-head p{font-size:13px;color:#94a3b8;margin-top:2px}
+
+/* ---------- PATH CARDS ---------- */
+.path-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(258px,1fr));gap:16px}
+.path-card{position:relative;background:#fff;border:1px solid #e8ecf3;border-radius:20px;padding:24px;cursor:pointer;transition:.24s cubic-bezier(.2,.8,.3,1);text-align:left;width:100%}
+.path-card:hover{transform:translateY(-5px);box-shadow:0 18px 44px rgba(15,23,42,.11)}
+.path-card::after{content:'';position:absolute;inset:0;border-radius:20px;border:2px solid var(--pc);opacity:0;transition:.24s;pointer-events:none}
+.path-card:hover::after{opacity:1}
+.pc-icon{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;font-size:23px;background:var(--pbg);margin-bottom:14px}
+.pc-title{font-size:19px;font-weight:800;letter-spacing:-.4px}
+.pc-tag{font-size:13px;color:var(--pc);font-weight:600;margin-top:3px}
+.pc-desc{font-size:13.5px;color:#64748b;margin-top:10px;line-height:1.65}
+.pc-foot{margin-top:16px;padding-top:14px;border-top:1px dashed #e8ecf3;display:flex;align-items:center;justify-content:space-between;font-size:13px;color:#94a3b8}
+.pc-arrow{color:var(--pc);font-weight:700;transition:.2s}
+.path-card:hover .pc-arrow{transform:translateX(4px)}
+
+/* ---------- PANEL ---------- */
+.panel{background:#fff;border:1px solid #e8ecf3;border-radius:20px;padding:24px;box-shadow:0 2px 12px rgba(15,23,42,.03)}
+.panel h3{font-size:16px;font-weight:800;letter-spacing:-.3px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.panel h3 .bar{width:3px;height:15px;border-radius:2px;background:#4f46e5}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:760px){.grid-2{grid-template-columns:1fr}}
+
+/* ---------- PATH DETAIL ---------- */
+.back-btn{display:inline-flex;align-items:center;gap:6px;font-size:14px;color:#64748b;padding:6px 0;margin-bottom:14px;transition:.18s}
+.back-btn:hover{color:#4f46e5;gap:9px}
+.path-hero{border-radius:24px;padding:32px;color:#fff;position:relative;overflow:hidden;background:linear-gradient(135deg,var(--pc),var(--pc2))}
+.path-hero::after{content:'';position:absolute;right:-40px;top:-40px;width:190px;height:190px;border-radius:50%;background:rgba(255,255,255,.11)}
+.path-hero .ph-icon{font-size:34px;margin-bottom:8px}
+.path-hero h1{font-size:30px;letter-spacing:-1px;font-weight:800}
+.path-hero .ph-tag{font-size:14px;opacity:.92;margin-top:4px;font-weight:500}
+.path-hero .ph-desc{font-size:14px;opacity:.86;margin-top:14px;max-width:640px;line-height:1.75}
+
+.timeline{position:relative;padding-left:24px}
+.timeline::before{content:'';position:absolute;left:6px;top:6px;bottom:6px;width:2px;background:#eef1f7;border-radius:2px}
+.tl-item{position:relative;padding-bottom:20px}
+.tl-item:last-child{padding-bottom:0}
+.tl-item::before{content:'';position:absolute;left:-24px;top:6px;width:12px;height:12px;border-radius:50%;background:#fff;border:2.5px solid var(--pc);box-sizing:border-box}
+.tl-date{font-size:12px;font-weight:700;color:var(--pc);letter-spacing:.3px}
+.tl-title{font-size:14px;font-weight:700;margin-top:1px}
+.tl-note{font-size:13px;color:#64748b;margin-top:2px;line-height:1.6}
+
+.tip-list{list-style:none;display:flex;flex-direction:column;gap:11px}
+.tip-list li{position:relative;padding-left:20px;font-size:13.5px;color:#475569;line-height:1.72}
+.tip-list li::before{content:'';position:absolute;left:5px;top:9px;width:5px;height:5px;border-radius:50%;background:var(--pc);opacity:.65}
+.tip-list.res li::before{border-radius:2px;width:6px;height:6px;top:8px}
+
+/* ---------- 资料库 Materials ---------- */
+.mat-bar{background:#fff;border:1px solid #e8ecf3;border-radius:18px;padding:16px 18px;margin-bottom:16px}
+.search-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.search-box{flex:1;min-width:200px;border:1px solid #e2e8f0;border-radius:10px;padding:10px 14px}
+.tag-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.tag{padding:5px 12px;border-radius:8px;font-size:13px;background:#f1f3f9;cursor:pointer}
+.tag.active{background:#4f46e5;color:#fff}
+.mat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.mat-card{background:#fff;border:1px solid #e8ecf3;border-radius:16px;padding:18px;transition:0.2s}
+.mat-card:hover{box-shadow:0 10px 26px rgba(15,23,42,0.08)}
+.mat-title{font-weight:700;font-size:15px;margin-bottom:6px}
+.mat-desc{font-size:13px;color:#64748b;margin-bottom:10px}
+.mat-meta{display:flex;justify-content:space-between;font-size:12px;color:#94a3b8}
+.star-btn{cursor:pointer}
+
+/* ---------- QUIZ 测评问卷 ---------- */
+.quiz-wrap{max-width:700px;margin:0 auto}
+.quiz-progress{height:6px;background:#eef1f7;border-radius:99px;overflow:hidden;margin-bottom:8px}
+.quiz-progress>div{height:100%;background:#4f46e5;width:0%;transition:0.3s}
+.q-num{font-size:13px;color:#94a3b8;margin-bottom:18px}
+.q-title{font-size:18px;font-weight:700;margin-bottom:20px}
+.q-options{display:flex;flex-direction:column;gap:10px}
+.q-opt{border:1px solid #e2e8f0;border-radius:12px;padding:14px 16px;text-align:left;transition:0.2s}
+.q-opt:hover{border-color:#4f46e5;background:#f7f8ff}
+.q-opt.active{background:#eef0fd;border-color:#4f46e5}
+.quiz-result{text-align:center;padding:20px 0}
+.res-card{background:#fff;border-radius:20px;padding:26px;margin-top:16px;border:1px solid #e8ecf3}
+
+/* ---------- 打卡 & 社区 ---------- */
+.check-days{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 20px}
+.day-tag{width:34px;height:34px;border-radius:8px;display:grid;place-items:center;font-size:12px;background:#f1f3f9}
+.day-tag.done{background:#4f46e5;color:#fff}
+.textarea{width:100%;border:1px solid #e2e8f0;border-radius:12px;padding:14px;min-height:96px;resize:vertical;margin:10px 0}
+.btn-primary{background:#4f46e5;color:#fff;padding:10px 20px;border-radius:10px;font-size:14px}
+.msg-item{background:#f7f8ff;border-radius:12px;padding:14px;margin-top:10px;font-size:14px}
+
+/* ---------- 页面切换容器 ---------- */
+.page{display:none}
+.page.active{display:block}
+</style>
+</head>
+<body>
+<div class="nav">
+  <div class="nav-inner">
+    <div class="logo">
+      <div class="logo-mark">岔</div>
+      <span>三岔路口</span>
+    </div>
+    <div class="tabs">
+      <button class="tab active" data-page="home">首页</button>
+      <button class="tab" data-page="materials">资料库</button>
+      <button class="tab" data-page="quiz">方向测评</button>
+      <button class="tab" data-page="checkin">学习打卡</button>
+      <button class="tab" data-page="community">社区交流</button>
+    </div>
+  </div>
+</div>
+
+<!-- 首页 -->
+<div class="page active" id="page-home">
+  <div class="view">
+    <div class="hero">
+      <div class="pill"><span class="dot-live"></span>大学生升学就业选择平台</div>
+      <h1>站在三岔路口，找到你的<em>未来方向</em></h1>
+      <p>考研｜考公｜实习就业，看时间线、做测评、和同伴一起打卡前进</p>
+      <div class="countdowns">
+        <div class="cd">
+          <div class="cd-label">距离考研</div>
+          <div class="cd-num"><span id="day-ky">--</span><small>天</small></div>
+        </div>
+        <div class="cd">
+          <div class="cd-label">距离国考</div>
+          <div class="cd-num"><span id="day-gk">--</span><small>天</small></div>
+        </div>
+        <div class="cd">
+          <div class="cd-label">春招倒计时</div>
+          <div class="cd-num"><span id="day-cz">--</span><small>天</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-head">
+      <div>
+        <h2>三条发展赛道</h2>
+        <p>点击卡片查看完整时间规划与建议</p>
+      </div>
+    </div>
+    <div class="path-grid">
+      <div class="path-card" style="--pc:#2563eb;--pbg:#dbeafe" data-path="ky">
+        <div class="pc-icon">📚</div>
+        <div class="pc-title">考研深造</div>
+        <div class="pc-tag">提升学历</div>
+        <div class="pc-desc">继续校园学习，提升专业能力，适合想深耕专业、提升学历竞争力的同学。</div>
+        <div class="pc-foot"><span>查看时间规划</span><span class="pc-arrow">→</span></div>
+      </div>
+      <div class="path-card" style="--pc:#059669;--pbg:#d1fae5" data-path="gk">
+        <div class="pc-icon">🏛️</div>
+        <div class="pc-title">考公编制</div>
+        <div class="pc-tag">稳定体制</div>
+        <div class="pc-desc">公务员、事业单位，追求工作稳定，重视福利待遇与体制内发展路径。</div>
+        <div class="pc-foot"><span>查看时间规划</span><span class="pc-arrow">→</span></div>
+      </div>
+      <div class="path-card" style="--pc:#d97706;--pbg:#fef3c7" data-path="sx">
+        <div class="pc-icon">💼</div>
+        <div class="pc-title">实习就业</div>
+        <div class="pc-tag">直接工作</div>
+        <div class="pc-desc">尽早进入职场，积累项目经历，通过实习转正，快速获得经济独立。</div>
+        <div class="pc-foot"><span>查看时间规划</span><span class="pc-arrow">→</span></div>
+      </div>
+    </div>
+
+    <div id="path-detail" class="hidden" style="margin-top:40px;">
+      <button class="back-btn" id="backHome">← 返回首页</button>
+      <div class="path-hero" id="ph-hero">
+        <div class="ph-icon" id="ph-icon"></div>
+        <h1 id="ph-title"></h1>
+        <div class="ph-tag" id="ph-tag"></div>
+        <div class="ph-desc" id="ph-desc"></div>
+      </div>
+      <div style="margin-top:24px;" class="grid-2">
+        <div class="panel">
+          <h3><span class="bar"></span>关键时间线</h3>
+          <div class="timeline" id="tl-box"></div>
+        </div>
+        <div class="panel">
+          <h3><span class="bar"></span>适合人群与建议</h3>
+          <ul class="tip-list res" id="tip-box"></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 资料库页面 -->
+<div class="page" id="page-materials">
+  <div class="view">
+    <div class="sec-head"><h2>学习资料库</h2><p>考研｜考公｜求职简历资料参考</p></div>
+    <div class="mat-bar">
+      <div class="search-row">
+        <input class="search-box" id="matSearch" placeholder="搜索资料标题/关键词">
+      </div>
+      <div class="tag-row" id="tagWrap">
+        <span class="tag active" data-filter="all">全部</span>
+        <span class="tag" data-filter="ky">考研</span>
+        <span class="tag" data-filter="gk">考公</span>
+        <span class="tag" data-filter="job">求职实习</span>
+      </div>
+    </div>
+    <div class="mat-grid" id="matGrid"></div>
+  </div>
+</div>
+
+<!-- 测评页面 -->
+<div class="page" id="page-quiz">
+  <div class="view">
+    <div class="quiz-wrap">
+      <div class="sec-head"><h2>发展方向测评</h2></div>
+      <div class="quiz-progress"><div id="quiz-bar"></div></div>
+      <div class="q-num" id="q-index"></div>
+      <div class="q-title" id="q-title"></div>
+      <div class="q-options" id="q-opts"></div>
+      <div class="quiz-result hidden" id="quiz-res">
+        <h3>你的测评结果</h3>
+        <div class="res-card">
+          <div id="res-text"></div>
+          <button class="btn-primary" style="margin-top:16px" id="restartQuiz">重新测评</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 打卡页面 -->
+<div class="page" id="page-checkin">
+  <div class="view">
+    <div class="sec-head"><h2>每日学习打卡</h2><p>记录自己的备考进度，数据保存在本地</p></div>
+    <div class="panel">
+      <h3><span class="bar"></span>近7天打卡</h3>
+      <div class="check-days" id="day-wrap"></div>
+      <button class="btn-primary" id="doCheck">✅ 今日打卡</button>
+    </div>
+  </div>
+</div>
+
+<!-- 社区 -->
+<div class="page" id="page-community">
+  <div class="view">
+    <div class="sec-head"><h2>同伴社区</h2><p>写下你的困惑与经验（仅本地保存）</p></div>
+    <div class="panel">
+      <textarea class="textarea" id="msgInput" placeholder="分享你的备考困惑、经验、心情..."></textarea>
+      <button class="btn-primary" id="sendMsg">发布留言</button>
+      <div id="msgList"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===================== 倒计时计算 =====================
+function countDown(targetStr, domId){
+  const target = new Date(targetStr);
+  const now = new Date();
+  const ms = target.getTime() - now.getTime();
+  if(ms<=0){document.getElementById(domId).innerText="已开始";return;}
+  const days = Math.floor(ms/(1000*60*60*24));
+  document.getElementById(domId).innerText = days;
+}
+countDown("2027-12-21","day-ky");
+countDown("2027-11-23","day-gk");
+countDown("2028-02-01","day-cz");
+
+// ===================== 页面tab切换 =====================
+const tabs = document.querySelectorAll(".tab");
+const pages = document.querySelectorAll(".page");
+tabs.forEach(t=>{
+  t.onclick=()=>{
+    const pid = t.dataset.page;
+    tabs.forEach(x=>x.classList.remove("active"));
+    t.classList.add("active");
+    pages.forEach(p=>p.classList.remove("active"));
+    document.getElementById("page-"+pid).classList.add("active");
+  }
+})
+
+// ===================== 赛道详情数据 =====================
+const pathData = {
+  ky:{
+    pc:"#2563eb",pc2:"#1d4ed8",icon:"📚",title:"考研深造",tag:"学历提升路线",
+    desc:"通过全国硕士研究生招生考试，进入研究生阶段学习，提升专业深度与学历门槛。",
+    timeline:[
+      {d:"大三上",t:"确定专业院校",n:"收集报录比，初步择校"},
+      {d:"大三下",t:"基础复习",n:"英语单词、数学基础、专业课通读"},
+      {d:"6‑9月",t:"强化阶段",n:"刷题，专业课一轮二轮背诵"},
+      {d:"10月",t:"网上报名",n:"填报学校专业信息"},
+      {d:"12月",t:"参加初试",n:"打印准考证参加考试"},
+      {d:"次年3‑4月",t:"复试调剂",n:"面试、调剂、录取"}
+    ],
+    tips:[
+      "适合愿意继续钻研专业，不急于就业的同学",
+      "考研竞争激烈，择校需要结合自身实力",
+      "需要长期自律，做好一年备考心理准备",
+      "部分专业专硕学硕选择要提前区分清楚"
+    ]
+  },
+  gk:{
+    pc:"#059669",pc2:"#047857",icon:"🏛️",title:"考公编制",tag:"体制稳定路线",
+    desc:"参加国考、省考、事业单位考试，进入体制内获取稳定岗位。",
+    timeline:[
+      {d:"大三下",t:"了解岗位",n:"看懂岗位表，专业限制条件"},
+      {d:"4‑8月",t:"系统学习行测申论",n:"基础课程+刷题训练"},
+      {d:"9‑10月",t:"国考公告发布",n:"选岗报名"},
+      {d:"11月底",t:"国考笔试",n:"参加公共科目笔试"},
+      {d:"次年1‑3月",t:"面试体检政审",n:"面试、体检、政审流程"},
+      {d:"全年",t:"省考事业单位",n:"各省联考与事业单位招考"}
+    ],
+    tips:[
+      "追求工作稳定性，接受体制工作节奏",
+      "岗位专业限制强，三不限竞争极大",
+      "刷题量非常关键，重视申论写作练习",
+      "可以同时参加国考、省考、事业编多场考试"
+    ]
+  },
+  sx:{
+    pc:"#d97706",pc2:"#b45309",icon:"💼",title:"实习就业",tag:"职场成长路线",
+    desc:"通过实习积累经历，参加秋招春招，直接步入职场。",
+    timeline:[
+      {d:"大二‑大三",t:"找第一段实习",n:"积累基础项目经历"},
+      {d:"大三3‑6月",t:"暑期实习",n:"争取实习转正机会"},
+      {d:"7‑9月",t:"准备简历",n:"打磨简历、面试题库"},
+      {d:"8‑11月",t:"秋招黄金期",n:"投递大量企业笔试面试"},
+      {d:"次年2‑4月",t:"春招补录",n:"秋招不理想重点把握春招"},
+      {d:"6月",t:"毕业入职",n:"拿到offer办理入职"}
+    ],
+    tips:[
+      "希望尽早经济独立，积累真实工作经验",
+      "实习经历对求职权重很高，越早开始越好",
+      "多投递，不要害怕面试失败，复盘每一次面试",
+      "分清实习、正式校招、外包岗位的区别"
+    ]
+  }
+};
+
+document.querySelectorAll(".path-card").forEach(card=>{
+  card.onclick=()=>{
+    const key = card.dataset.path;
+    const d = pathData[key];
+    const detailDom = document.getElementById("path-detail");
+    document.documentElement.style.setProperty('--pc',d.pc);
+    document.documentElement.style.setProperty('--pc2',d.pc2);
+    document.getElementById("ph-icon").innerText = d.icon;
+    document.getElementById("ph-title").innerText = d.title;
+    document.getElementById("ph-tag").innerText = d.tag;
+    document.getElementById("ph-desc").innerText = d.desc;
+    const tlBox = document.getElementById("tl-box");
+    tlBox.innerHTML = "";
+    d.timeline.forEach(item=>{
+      const div = document.createElement("div");
+      div.className="tl-item";
+      div.innerHTML=`<div class="tl-date">${item.d}</div><div class="tl-title">${item.t}</div><div class="tl-note">${item.n}</div>`;
+      tlBox.appendChild(div);
+    })
+    const tipBox = document.getElementById("tip-box");
+    tipBox.innerHTML="";
+    d.tips.forEach(t=>{
+      const li = document.createElement("li");li.innerText=t;tipBox.appendChild(li);
+    })
+    detailDom.classList.remove("hidden");
+  }
+})
+document.getElementById("backHome").onclick=()=>{
+  document.getElementById("path-detail").classList.add("hidden");
+}
+
+// ===================== 资料库模块 =====================
+const matSource = [
+  {id:1,tag:"ky",title:"考研择校避坑指南",desc:"择校维度：报录比、分数线、复试占比、压坑判断",source:"整理笔记"},
+  {id:2,tag:"ky",title:"英语全年复习规划",desc:"单词、阅读、作文各阶段任务安排",source:"经验帖"},
+  {id:3,tag:"gk",title:"行测模块学习顺序",desc:"五大模块学习优先级，刷题节奏建议",source:"经验帖"},
+  {id:4,tag:"gk",title:"申论大作文写作框架",desc:"通用开头分论点结尾模板思路",source:"整理笔记"},
+  {id:5,tag:"job",title:"应届生简历撰写要点",desc:"STAR法则写实习项目经历",source:"求职资料"},
+  {id:6,tag:"job",title:"秋招网申笔试面试清单",desc:"投递、笔试、复盘完整流程",source:"求职资料"},
+  {id:7,tag:"ky",title:"专业课背诵方法论",desc:"多轮背诵、艾宾浩斯复习实操",source:"经验帖"},
+  {id:8,tag:"job",title:"常见面试问题回答思路",desc:"自我介绍、优缺点、职业规划答题框架",source:"求职资料"}
+];
+let matStar = JSON.parse(localStorage.getItem("matStar")||"[]");
+let currentFilter = "all";
+
+function renderMaterials(){
+  const kw = document.getElementById("matSearch").value.toLowerCase();
+  let arr = matSource;
+  if(currentFilter !== "all") arr = arr.filter(x=>x.tag===currentFilter);
+  if(kw) arr = arr.filter(x=>x.title.toLowerCase().includes(kw)||x.desc.toLowerCase().includes(kw));
+  const grid = document.getElementById("matGrid");
+  grid.innerHTML="";
+  arr.forEach(item=>{
+    const isStar = matStar.includes(item.id);
+    const card = document.createElement("div");
+    card.className="mat-card";
+    card.innerHTML=`
+      <div class="mat-title">${item.title}</div>
+      <div class="mat-desc">${item.desc}</div>
+      <div class="mat-meta">
+        <span>${item.source}</span>
+        <span class="star-btn" data-id="${item.id}">${isStar?"⭐已收藏":"☆收藏"}</span>
+      </div>
+    `;
+    grid.appendChild(card);
+  })
+  document.querySelectorAll(".star-btn").forEach(btn=>{
+    btn.onclick=(e)=>{
+      e.stopPropagation();
+      const sid = Number(btn.dataset.id);
+      if(matStar.includes(sid)){
+        matStar = matStar.filter(x=>x!==sid);
+      }else{
+        matStar.push(sid);
+      }
+      localStorage.setItem("matStar",JSON.stringify(matStar));
+      renderMaterials();
+    }
+  })
+}
+document.querySelectorAll("#tagWrap .tag").forEach(t=>{
+  t.onclick=()=>{
+    document.querySelectorAll("#tagWrap .tag").forEach(x=>x.classList.remove("active"));
+    t.classList.add("active");
+    currentFilter = t.dataset.filter;
+    renderMaterials();
+  }
+})
+document.getElementById("matSearch").oninput = renderMaterials;
+
+// ===================== 测评问卷 =====================
+const quizData = [
+  {q:"你更看重下面哪一点？",o:["工作稳定","学历提升","尽快赚钱独立"]},
+  {q:"面对长期枯燥复习你的状态？",o:["可以坚持一年以上","短期可以，容易疲惫","更愿意实践做事"]},
+  {q:"未来期望的生活节奏",o:["安稳规律，压力小","校园继续读书","职场挑战成长"]},
+  {q:"你的风险承受偏好",o:["求稳，尽量少冒险","可以接受一年备考赌一把","愿意接受职场变化"]}
+];
+let qIndex=0;
+let score={ky:0,gk:0,sx:0};
+const quizBar = document.getElementById("quiz-bar");
+const qIndexDom = document.getElementById("q-index");
+const qTitleDom = document.getElementById("q-title");
+const qOptsDom = document.getElementById("q-opts");
+const quizResDom = document.getElementById("quiz-res");
+const resTextDom = document.getElementById("res-text");
+
+function renderQuiz(){
+  if(qIndex >= quizData.length){
+    quizResDom.classList.remove("hidden");
+    let maxKey="ky";
+    let maxV = Math.max(score.ky,score.gk,score.sx);
+    if(maxV === score.gk) maxKey="gk";
+    if(maxV === score.sx) maxKey="sx";
+    const map = {ky:"考研深造",gk:"考公编制",sx:"实习就业"};
+    resTextDom.innerHTML = `<p style="font-size:18px;font-weight:bold">更适合你的方向：${map[maxKey]}</p>
+    <p style="margin-top:10px;color:#64748b">测评仅作参考，最终结合自己现实条件综合判断。</p>`;
+    return;
+  }
+  quizResDom.classList.add("hidden");
+  const item = quizData[qIndex];
+  quizBar.style.width = ((qIndex)/quizData.length*100)+"%";
+  qIndexDom.innerText = `题目 ${qIndex+1}/${quizData.length}`;
+  qTitleDom.innerText = item.q;
+  qOptsDom.innerHTML="";
+  item.o.forEach((opt,idx)=>{
+    const btn = document.createElement("button");
+    btn.className="q-opt";
+    btn.innerText = opt;
+    btn.onclick=()=>{
+      if(idx===0) score.gk+=1;
+      if(idx===1) score.ky+=1;
+      if(idx===2) score.sx+=1;
+      qIndex++;renderQuiz();
+    }
+    qOptsDom.appendChild(btn);
+  })
+}
+document.getElementById("restartQuiz").onclick=()=>{
+  qIndex=0;score={ky:0,gk:0,sx:0};renderQuiz();
+}
+
+// ===================== 打卡（localStorage） =====================
+let checkList = JSON.parse(localStorage.getItem("checkDays")||"[]");
+function renderCheckIn(){
+  const wrap = document.getElementById("day-wrap");
+  wrap.innerHTML="";
+  for(let i=6;i>=0;i--){
+    const d = new Date();
+    d.setDate(d.getDate()-i);
+    const s = d.toLocaleDateString();
+    const tag = document.createElement("div");
+    tag.className = "day-tag";
+    tag.innerText = d.getDate();
+    if(checkList.includes(s)) tag.classList.add("done");
+    wrap.appendChild(tag);
+  }
+}
+document.getElementById("doCheck").onclick=()=>{
+  const today = new Date().toLocaleDateString();
+  if(!checkList.includes(today)){
+    checkList.push(today);
+    localStorage.setItem("checkDays",JSON.stringify(checkList));
+  }
+  renderCheckIn();
+  alert("今日打卡完成！");
+}
+
+// ===================== 社区留言 =====================
+let msgArr = JSON.parse(localStorage.getItem("msgBoard")||"[]");
+function renderMsg(){
+  const list = document.getElementById("msgList");
+  list.innerHTML="";
+  msgArr.forEach(m=>{
+    const div = document.createElement("div");
+    div.className="msg-item";
+    div.innerHTML = `<div style="font-size:12px;color:#94a3b8">${m.time}</div><div style="margin-top:4px">${m.content}</div>`;
+    list.appendChild(div);
+  })
+}
+document.getElementById("sendMsg").onclick=()=>{
+  const input = document.getElementById("msgInput");
+  const txt = input.value.trim();
+  if(!txt) return;
+  msgArr.unshift({time:new Date().toLocaleString(),content:txt});
+  localStorage.setItem("msgBoard",JSON.stringify(msgArr));
+  input.value="";
+  renderMsg();
+}
+
+//页面初始化
+renderQuiz();
+renderCheckIn();
+renderMsg();
+renderMaterials();
+</script>
+</body>
+</html>
